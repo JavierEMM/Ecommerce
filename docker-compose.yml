@@ -1,50 +1,45 @@
 version: '3.8'
-
 services:
-  postgres:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
+  frontend:
+    build:
+      context: ./Frontend/keola-ecommerce
+      dockerfile: Dockerfile
     ports:
-      - "5432:5432"
+      - "4200:4200"
 
   backend:
     build:
       context: ./KeolaEcommerce
       dockerfile: Dockerfile
     environment:
-      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
-      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
-      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
-      SPRING_DATASOURCE_MONGODB_URI: ${SPRING_DATASOURCE_MONGODB_URI}
+      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:5432/ecommerceKeola
+      SPRING_R2DBC_USERNAME: postgres
+      SPRING_R2DBC_PASSWORD: root
+      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ecommerceKeola
     depends_on:
       - postgres
       - mongodb
     ports:
       - "8080:8080"
 
-  frontend:
-    build:
-      context: ./Frontend
-      dockerfile: Dockerfile
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: ecommerceKeola
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
     ports:
-      - "80:80"
-    depends_on:
-      - backend
+      - "5432:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
 
   mongodb:
     image: mongo:latest
-    environment:
-      MONGO_INITDB_DATABASE: ecommerceKeola
     ports:
       - "27017:27017"
     volumes:
-      - mongodb_data:/data/db
+      - mongo-data:/data/db
 
 volumes:
-  postgres_data:
-  mongodb_data:
+  postgres-data:
+  mongo-data:
