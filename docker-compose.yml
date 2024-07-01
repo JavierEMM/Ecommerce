@@ -12,10 +12,10 @@ services:
       context: ./KeolaEcommerce
       dockerfile: Dockerfile
     environment:
-      SPRING_R2DBC_URL: r2dbc:postgresql://postgres:5432/ecommerceKeola
+      SPRING_R2DBC_URL: r2dbc:postgresql://localhost:5432/ecommerceKeola
       SPRING_R2DBC_USERNAME: postgres
       SPRING_R2DBC_PASSWORD: root
-      SPRING_DATA_MONGODB_URI: mongodb://mongodb:27017/ecommerceKeola
+      SPRING_DATA_MONGODB_URI: mongodb://localhost:27017/ecommerceKeola
     depends_on:
       - postgres
       - mongodb
